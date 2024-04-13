@@ -2,19 +2,11 @@
 <project>
 	<!-- _________________________ Application Settings _________________________ -->
 
-	<app title="Kade Engine Community" file="Kade Engine Community" packageName="com.therealjake12.kec" package="com.therealjake12.kec" main="Main" version="1.9.3" company="TheRealJake12" />
-
-	<!--Switch Export with Unique ApplicationID and Icon-->
-	<set name="APP_ID" value="0x0100f6c013bbc000" />
+	<app title="thinking of a mod name..." file="UnnamedMod" packageName="com.charlescatyt.kec" package="com.charlescatyt.kec" main="Main" version="1.9.3" company="charlescatyt" />
 
 	<haxedef name="LINC_LUA_RELATIVE_DYNAMIC_LIB"/>
 
-	<!--The flixel preloader is not accurate in Chrome. You can use it regularly if you embed the swf into a html file
-		or you can set the actual size of your file manually at "FlxPreloaderBase-onUpdate-bytesTotal"-->
-	<!-- <app preloader="Preloader" resizable="true" /> -->
 	<app preloader="flixel.system.FlxPreloader" />
-
-	<!--Minimum without FLX_NO_GAMEPAD: 11.8, without FLX_NO_NATIVE_CURSOR: 11.2-->
 	<set name="SWF_VERSION" value="11.8" />
 
 	<!-- Use defines to ensure compile-time definitions have readable context. -->
@@ -62,10 +54,7 @@
 
 	<!--Mobile-specific-->
 	<window if="mobile" orientation="landscape" fullscreen="true" width="0" height="0" resizable="false"/>
-
-	<!--Switch-specific-->
-	<window if="switch" orientation="landscape" fullscreen="true" width="0" height="0" resizable="true" />
-
+	
 	<!-- _____________________________ Path Settings ____________________________ -->
 
 	<set name="BUILD_DIR" value="export/debug" if="debug" />
@@ -100,12 +89,7 @@
 	
 	<!-- <assets path="CHANGELOG.md" rename='changelog.txt'/> -->
 
-	<!-- NOTE FOR FUTURE SELF SINCE FONTS ARE ALWAYS FUCKY 
-		TO FIX ONE OF THEM, I CONVERTED IT TO OTF. DUNNO IF YOU NEED TO
-		THEN UHHH I USED THE NAME OF THE FONT WITH SETFORMAT() ON THE TEXT!!!
-		NOT USING A DIRECT THING TO THE ASSET!!!
-	-->
-	<assets path="assets/fonts"/>
+	<assets path="assets/fonts" embed='false' />
 	<!-- _______________________________ Libraries ______________________________ -->
 
 	<haxedev set='webgl' />
@@ -135,26 +119,7 @@
 	<!-- ______________________________ Haxedefines _____________________________ -->
 
 	<!--Enable the Flixel core recording system-->
-	<!--<haxedef name="FLX_RECORD" />-->
-
-	<!--Disable the right and middle mouse buttons-->
-	<!-- <haxedef name="FLX_NO_MOUSE_ADVANCED" /> -->
-
-	<!--Disable the native cursor API on Flash-->
-	<!--<haxedef name="FLX_NO_NATIVE_CURSOR" />-->
-
-	<!--Optimise inputs, be careful you will get null errors if you don't use conditionals in your game-->
-	<!-- <haxedef name="FLX_NO_MOUSE" if="mobile" /> -->
-	<!-- <haxedef name="FLX_NO_KEYBOARD" if="mobile" /> -->
-	<!--<haxedef name="FLX_NO_GAMEPAD" />-->
-	
-	<haxedef name="FLX_NO_TOUCH" if="desktop" />
-
-	<!--Disable the Flixel core sound tray-->
-	<!--<haxedef name="FLX_NO_SOUND_TRAY" />-->
-
-	<!--Disable the Flixel sound management code-->
-	<!--<haxedef name="FLX_NO_SOUND_SYSTEM" />-->
+	<haxedef name="FLX_RECORD" if="debug" />
 
 	<!--Disable the Flixel core focus lost screen-->
 	<haxedef name="FLX_NO_FOCUS_LOST_SCREEN" />
@@ -174,7 +139,7 @@
 	<haxeflag name="-D no-traces" unless="debug" />
 	<haxedef name="queue_experimental_optimization"/>
 
-	<haxeflag name="-dce" value="no" if="release"/>
+	<haxeflag name="-dce" value="no" if="FEATURE_HSCRIPT"/> 
 	<!--I'm Crying So Hard Right Now.-->
 
 	<!--Basically Allows Videos To Render In Higher Quality On Higher Resoluttions-->
