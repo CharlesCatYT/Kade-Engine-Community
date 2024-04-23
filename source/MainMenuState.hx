@@ -30,7 +30,7 @@ using StringTools;
 class MainMenuState extends MusicBeatState
 {
 	public static var nightly:String = "";
-	public static var kecVer:String = 'Kade Engine Community 1.9.3';
+	public static var kecVer:String = 'Kade Engine Community 1.9.4 PRE-RELEASE 1';
 	public static var keVer:String = "Kade Engine 1.8.1";
 	public static var curSelected:Int = 0;
 	public static var freakyPlaying:Bool = true;
@@ -129,6 +129,7 @@ class MainMenuState extends MusicBeatState
 		bg.updateHitbox();
 		bg.screenCenter();
 		bg.velocity.set(240, 0);
+		bg.moves = true;
 		bg.antialiasing = FlxG.save.data.antialiasing;
 		add(bg);
 
@@ -145,6 +146,7 @@ class MainMenuState extends MusicBeatState
 		magenta.updateHitbox();
 		magenta.screenCenter();
 		magenta.visible = false;
+		magenta.moves = true;
 		magenta.velocity.set(240, 0);
 		magenta.antialiasing = FlxG.save.data.antialiasing;
 		magenta.color = 0xFFfd719b;

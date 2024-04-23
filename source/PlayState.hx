@@ -467,8 +467,6 @@ class PlayState extends MusicBeatState
 		if (curSong != SONG.songId)
 		{
 			curSong = SONG.songId;
-			if (!FlxG.save.data.gpuRender)
-				Main.dumpCache();
 		}
 
 		// Set Rating Amounts To 0.
@@ -3894,10 +3892,7 @@ class PlayState extends MusicBeatState
 					{
 						// daNote.y = (strumY + Math.sin(angleDir) * daNote.distance) - (daNote.height - Note.swagWidth);
 
-						if ((PlayStateChangeables.botPlay
-							|| !daNote.mustPress
-							|| daNote.wasGoodHit
-							|| holdArray[Math.floor(Math.abs(daNote.noteData))]))
+						if (daNote.sustainActive)
 						{
 							if ((daNote.causesMisses) && daNote.y - daNote.offset.y * daNote.scale.y + daNote.height >= origin)
 							{
@@ -3911,10 +3906,7 @@ class PlayState extends MusicBeatState
 					}
 					else
 					{
-						if ((PlayStateChangeables.botPlay
-							|| !daNote.mustPress
-							|| daNote.wasGoodHit
-							|| holdArray[Math.floor(Math.abs(daNote.noteData))]))
+						if (daNote.sustainActive)
 						{
 							// Clip to strumline
 							if ((daNote.causesMisses) && daNote.y + daNote.offset.y * daNote.scale.y <= origin)
@@ -4030,6 +4022,7 @@ class PlayState extends MusicBeatState
 								{
 									// there should be a ! infront of the wasGoodHit one but it'd cause a miss per every sustain note.
 									// now it just misses on the slightest sustain end for some reason.
+									// nvm I fixed it a long time ago
 									Debug.logTrace("User released key while playing a sustain at: " + daNote.spotInLine);
 									for (i in daNote.parent.children)
 									{
@@ -4180,30 +4173,13 @@ class PlayState extends MusicBeatState
 			{
 				paused = true;
 				inst.stop();
+				
 				if (!SONG.splitVoiceTracks)
 					vocals.stop();
 				else
 				{
 					vocalsPlayer.stop();
 					vocalsEnemy.stop();
-				}
-				if (FlxG.save.data.scoreScreen)
-				{
-					persistentUpdate = false;
-					inResults = true;
-					openSubState(subStates[1]);
-				}
-				else
-				{
-					GameplayCustomizeState.freeplayNoteStyle = 'normal';
-					GameplayCustomizeState.freeplayWeek = 1;
-					FlxG.sound.playMusic(Paths.music(FlxG.save.data.watermark ? "freakyMenu" : "ke_freakyMenu"));
-					MainMenuState.freakyPlaying = true;
-					Conductor.changeBPM(102);
-					createTimer(2, function(tmr:FlxTimer)
-					{
-						MusicBeatState.switchState(new StoryMenuState());
-					});
 				}
 
 				#if FEATURE_LUAMODCHART
@@ -4217,6 +4193,22 @@ class PlayState extends MusicBeatState
 				if (SONG.validScore)
 				{
 					Highscore.saveWeekScore(storyWeek, campaignScore, storyDifficulty, 1);
+				}
+				
+				if (FlxG.save.data.scoreScreen)
+				{
+					persistentUpdate = false;
+					inResults = true;
+					openSubState(subStates[1]);
+				}
+				else
+				{
+					GameplayCustomizeState.freeplayNoteStyle = 'normal';
+					GameplayCustomizeState.freeplayWeek = 1;
+					FlxG.sound.playMusic(Paths.music(FlxG.save.data.watermark ? "freakyMenu" : "ke_freakyMenu"));
+					MainMenuState.freakyPlaying = true;
+					Conductor.changeBPM(102);
+					MusicBeatState.switchState(new StoryMenuState());
 				}
 			}
 			else
@@ -4482,6 +4474,7 @@ class PlayState extends MusicBeatState
 
 		rating.velocity.y -= FlxG.random.int(140, 175);
 		rating.velocity.x -= FlxG.random.int(0, 10);
+		rating.moves = true;
 		rating.acceleration.y = 550;
 
 		if (FlxG.save.data.showMs)
@@ -4507,6 +4500,7 @@ class PlayState extends MusicBeatState
 		comboSpr.y = rating.y + 100;
 		comboSpr.acceleration.y = 600;
 		comboSpr.velocity.y -= 150;
+		comboSpr.moves = true;
 
 		currentTimingShown.screenCenter();
 		if (!PlayStateChangeables.middleScroll)
@@ -4592,6 +4586,7 @@ class PlayState extends MusicBeatState
 				numScore.acceleration.y = FlxG.random.int(200, 300);
 				numScore.velocity.y -= FlxG.random.int(140, 160);
 				numScore.velocity.x = FlxG.random.float(-5, 5);
+				numScore.moves = true;
 
 				lastScore.push(numScore);
 				insert(PlayState.instance.members.indexOf(notes), numScore);
@@ -4739,7 +4734,10 @@ class PlayState extends MusicBeatState
 				combo = 0;
 			}
 
-			misses++;
+			if (!endingSong)
+			{
+				misses++;
+			}
 
 			daNote.rating = Ratings.timingWindows[0];
 

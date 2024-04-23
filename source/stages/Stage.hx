@@ -194,6 +194,7 @@ class Stage extends MusicBeatState
 						fastCar = new FlxSprite(-300, 160).loadGraphic(Paths.image('limo/fastCarLol'));
 						fastCar.antialiasing = FlxG.save.data.antialiasing;
 						fastCar.visible = false;
+						fastCar.moves = true;
 						var grpLimoDancers = new FlxTypedGroup<BackgroundDancer>();
 
 						if (FlxG.save.data.distractions)
@@ -448,6 +449,7 @@ class Stage extends MusicBeatState
 					{
 						var tankClouds:FlxSprite = new FlxSprite(FlxG.random.int(-700, -100), FlxG.random.int(-20, 20)).loadGraphic(Paths.image('tankClouds'));
 						tankClouds.velocity.x = FlxG.random.float(5, 15);
+						tankClouds.moves = true;
 						tankClouds.antialiasing = FlxG.save.data.antialiasing;
 						tankClouds.scrollFactor.set(0.1, 0.1);
 
@@ -772,8 +774,11 @@ class Stage extends MusicBeatState
 		super.stepHit();
 
 		#if FEATURE_HSCRIPT
-		scripts.setAll("curStep", curStep);
-		scripts.executeAllFunc("stepHit", [curStep]);
+		if (scripts != null)
+		{
+			scripts.setAll("curStep", curStep);
+			scripts.executeAllFunc("stepHit", [curStep]);
+		}
 		#end
 
 		if (FlxG.save.data.background)
